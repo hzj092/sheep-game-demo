@@ -14,6 +14,26 @@ describe('two-mode game flow', () => {
     expect(screen.getAllByRole('button', { name: /完全随机|倒金字塔|羊了个羊/ })).toHaveLength(3)
   })
 
+  it('stacks the three second-level choices vertically', () => {
+    render(<App />)
+    const choices = screen.getByRole('button', { name: /完全随机/ }).parentElement
+
+    expect(choices).toHaveClass('layout-choice-list')
+    expect(choices?.querySelectorAll('.layout-choice')).toHaveLength(3)
+  })
+
+  it('orders gameplay as progress, board, tray, and tools in one column', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<App />)
+    await user.click(screen.getByRole('button', { name: /基础关/ }))
+
+    const gameLayout = container.querySelector('.game-layout')!
+    const orderedRegions = [...gameLayout.querySelectorAll('.level-heading, .board-frame, .tray-block, .tools-block')]
+      .map((element) => element.className)
+    expect(orderedRegions).toEqual(['level-heading', 'board-frame', 'tray-block', 'tools-block'])
+    expect(gameLayout).toHaveClass('game-layout')
+  })
+
   it('uses tool stock directly, grants stock after an ad, and does not auto-use it', async () => {
     const user = userEvent.setup()
     render(<App />)

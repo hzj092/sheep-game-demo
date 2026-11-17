@@ -113,17 +113,15 @@ export default function App() {
         <section className="play-column" aria-label="游戏区域">
           <div className="level-heading"><div className="level-copy"><span className="eyebrow">{state.level === 'basic' ? 'BASIC' : 'SHEEP MODE'} · {state.generatorVersion}</span><h1>{state.level === 'basic' ? level?.title : state.layout === 'random' ? '完全随机' : state.layout === 'inverted-pyramid' ? '倒金字塔' : '羊了个羊'}</h1><p>{state.layout === 'random' && state.level === 'sheep' ? '沿用当前随机牌堆' : state.layout === 'inverted-pyramid' ? '完整平方层，顶层 61 张' : level?.subtitle}</p></div><div className="level-medal" aria-label={`已清除 ${cleared} 张`}>{String(cleared).padStart(2, '0')}<small>已清</small></div></div>
           <div className="progress-track" aria-label={`进度 ${progress}%`}><span style={{ width: `${progress}%` }} /></div>
-          <div className="board-frame">
-            <div className="board-topline"><span className="board-caption"><span className="caption-mark" /> 牌堆区域</span><span className="remaining-count">剩余 <strong>{remaining}</strong> 张</span></div>
-            <Board state={state} onSelect={(id) => setState((current) => current ? selectTile(current, id) : current)} />
-            <div className="board-footline"><span>可选牌按层间覆盖实时判断</span><span>Seed {state.seed}</span></div>
-          </div>
-          {state.level === 'basic' ? <aside className="tutorial-strip"><span className="tutorial-icon">ⓘ</span><div className="tutorial-copy"><strong>基础关</strong><span>{['点击未被覆盖的牌放入槽位。', '凑齐三张相同牌型即可消除。', '槽位最多七张，善用道具。'][cleared % 3]}</span></div></aside> : null}
         </section>
+        <div className="board-frame">
+          <div className="board-topline"><span className="board-caption"><span className="caption-mark" /> 牌堆区域</span><span className="remaining-count">剩余 <strong>{remaining}</strong> 张</span></div>
+          <Board state={state} onSelect={(id) => setState((current) => current ? selectTile(current, id) : current)} />
+          <div className="board-footline"><span>可选牌按层间覆盖实时判断</span><span>Seed {state.seed}</span></div>
+        </div>
         <aside className="control-column" aria-label="游戏控制">
           <Tray state={state} hint={toolHint} />
           <Tools counts={state.tools} adCounts={state.toolAds} onUse={useTool} />
-          <div className="control-footnote">暂存会将槽位最左侧三张牌放回牌堆底部</div>
         </aside>
       </div>
       {state.status === 'lost' && <div className="result-backdrop"><section className="result-panel result-loss" role="dialog" aria-modal="true" aria-labelledby="result-title"><div className="result-icon">🐑</div><span className="eyebrow">TRY AGAIN</span><h2 id="result-title">槽位满了</h2><p>模拟广告续关会把槽位最左侧三张牌放回牌区底部。</p><div className="result-actions"><button className="secondary-action" type="button" disabled={state.revive <= 0} onClick={() => setAdRequest('revive')}>模拟广告续关 <BadgeCheck size={16} /></button><button className="primary-action" type="button" onClick={() => settleHome('lost')}>记录失败并返回首页 <ArrowLeft size={16} /></button></div></section></div>}
